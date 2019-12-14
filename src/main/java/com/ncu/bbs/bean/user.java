@@ -37,9 +37,7 @@ public class user {
         this.uId = uId;
     }
 
-    public String getuUserid() {
-        return uUserid;
-    }
+    public String getuUserid() { return uUserid; }
 
     public void setuUserid(String uUserid) {
         this.uUserid = uUserid;
