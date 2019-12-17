@@ -6,10 +6,12 @@ import com.ncu.bbs.dao.userMapper;
 import com.ncu.bbs.services.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
-@Service
+@Service("userService")
+@ContextConfiguration("classpath:applicationContext.xml")
 public class userServiceImp implements userService {
 
     @Autowired
@@ -68,5 +70,27 @@ public class userServiceImp implements userService {
     @Override
     public int updateByPrimaryKey(user record) {
         return 0;
+    }
+
+    /**
+     * 用户保存方法
+     * @param user
+     */
+    @Override
+    public void saveUser(user user) {
+        usermapper.insertSelective(user);
+    }
+
+    /**
+     * 检验用户账号是否可用
+     * @param uName
+     * @return  true代表当前账号可用 false代表不可用
+     */
+    public boolean checkuUserid(String uUserid){
+        userExample example = new userExample();
+        userExample.Criteria criteria = example.createCriteria();
+        criteria.andUUseridEqualTo(uUserid);
+        long count = usermapper.countByExample(example);
+        return count==0;
     }
 }

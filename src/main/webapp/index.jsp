@@ -9,12 +9,11 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
-    <title>Title</title>
+    <title>登录</title>
     <%
         //这个的路径是以斜线开始的，不以斜线结束
         pageContext.setAttribute("APP_PATH",request.getContextPath());
     %>
-
     <!--
         web路径：
         1.不以/开始的相对路径，找资源，以当前资源的路径为基准，经常容易出问题
@@ -45,6 +44,6 @@
 </script>
 <body>
 <div id="info"></div>
-<button type="button" class="btn btn-primary">（首选项）Primary</button>
+<button type="button" class="btn btn-primary">注册</button>
 </body>
 </html>

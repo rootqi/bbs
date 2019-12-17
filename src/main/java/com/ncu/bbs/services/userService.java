@@ -28,4 +28,8 @@ public interface userService {
     int updateByPrimaryKeySelective(user record);
 
     int updateByPrimaryKey(user record);
+
+    void saveUser(user user);
+
+    boolean checkuUserid(String uUserid);
 }

@@ -138,4 +138,9 @@ public class user {
     public void setuPoints(Integer uPoints) {
         this.uPoints = uPoints;
     }
+
+    @Override
+    public String toString() {
+        return "User [id=" + uEmail + "]";
+    }
 }
