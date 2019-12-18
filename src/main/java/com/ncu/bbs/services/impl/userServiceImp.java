@@ -103,4 +103,9 @@ public class userServiceImp implements userService {
     public List<user> getAll() {
         return usermapper.selectByExample(null);
     }
+
+    @Override
+    public void deleteUser(Integer uId){
+        usermapper.deleteByPrimaryKey(uId);
+    }
 }

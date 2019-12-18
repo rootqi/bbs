@@ -1,21 +1,14 @@
 package com.ncu.bbs.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ncu.bbs.bean.Msg;
 import com.ncu.bbs.bean.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -24,33 +17,17 @@ public class userController {
     @Autowired
     com.ncu.bbs.services.userService userservice;
 
+    @RequestMapping(value="/users/{uId}",method = RequestMethod.DELETE)
+    public Msg deleteEmById(@PathVariable("uId")Integer uId){
+        userservice.deleteUser(uId);
+        return Msg.success();
+    }
     /**
      * 用户注册信息保存
      * @param
      * @return
      */
-//    @RequestMapping(value="/reguser",method = RequestMethod.POST)
-//    @ResponseBody
-//    public Msg saveUser(@RequestParam("uUserid") String uUserid,
-//                        @RequestParam("uPassword") String uPassword,
-//                        @RequestParam("uNickname") String uNickname,
-//                        @RequestParam("uEmail") String uEmail,
-//                        @RequestParam("uName") String uName,
-//                        @RequestParam("uWorkplace") String uWorkplace,
-//                        @RequestParam("uSex") String uSex
-//    ){
-//        user user = new user();
-//        user.setuUserid(uUserid);
-//        System.out.print(uName);
-//        user.setuPassword(uPassword);
-//        user.setuNickname(uNickname);
-//        user.setuEmail(uEmail);
-//        user.setuName(uName);
-//        user.setuWorkplace(uWorkplace);
-//        user.setuSex(uSex);
-//        userservice.saveUser(user);
-//        return Msg.success();
-//    }
+
     @RequestMapping(value="/reguser",method = RequestMethod.POST)
     @ResponseBody
     public Msg saveUser(HttpServletRequest request){
@@ -103,25 +80,8 @@ public class userController {
         PageHelper.startPage(pn,5);
         //分页查询
         List<user> user = userservice.getAll();
-        PageInfo page = new PageInfo(user,5);
+        PageInfo<com.ncu.bbs.bean.user> page = new PageInfo<>(user,5);
         return Msg.success().add("pageInfo",page);
     }
 
-//    @RequestMapping("/user")
-//    public String getUser(@RequestParam(value = "pn",defaultValue = "1")Integer pn, Model model) throws JsonProcessingException {
-//        //这是一个分页查询
-//        //引入PageHelper分页插件
-//        //在查询之前调用,传入页码，以及每一页的大小
-//        PageHelper.startPage(pn,5);
-//        //分页查询
-//        List<user> user = userservice.getAll();
-//        PageInfo page = new PageInfo(user,5);
-//        model.addAttribute("pageInfo",page);
-//        HashMap<String, PageInfo> hashMap = new HashMap();
-//        hashMap.put("pageInfo",page);
-//        ObjectMapper mapper = new ObjectMapper();
-//        String jsonStr = mapper.writeValueAsString(hashMap);
-//        return jsonStr;
-//        return "userlist";
-//    }
 }

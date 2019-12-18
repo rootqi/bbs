@@ -5,7 +5,7 @@
          version="4.0">
     <!--1.启动Spring的容器     -->
     <welcome-file-list>
-        <welcome-file>viewsuserlist.jsp</welcome-file>
+        <welcome-file>admin.jsp</welcome-file>
     </welcome-file-list>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

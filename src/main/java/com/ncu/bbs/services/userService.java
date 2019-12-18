@@ -34,4 +34,6 @@ public interface userService {
     boolean checkuUserid(String uUserid);
 
     List<user> getAll();
+
+    void deleteUser(Integer uUserid);
 }

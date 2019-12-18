@@ -59,51 +59,59 @@
          <!--显示分页信息-->
          <div class="row">
              <!--分页文字信息-->
-             <div class="col-md-6">
-                 当前 页，总 页,总 条记录
+             <div class="col-md-6" id="page_info_area">
              </div>
              <!--分页条-->
-             <div class="col-md-6">
+             <div class="col-md-6" id="page_nav_area">
 
              </div>
          </div>
      </div>
      <script type="text/javascript">
-         //1.页面加载完成以后，直接去发送ajax要分页数据
-         $(function (){
-            $.ajax({
-                url:"${APP_PATH}/user",
-                date:"pn=1",
-                type:"get",
-                success:function (result){
-                    // console.log(result);
-                    //解析显示员工数据
-                    build_user_table(result);
-                    //解析显示分页
-
-                }
-            })
+         var totalRecord;//总记录数
+         var currentPage;//当前页
+         //1.页面加载请完成后，直接发送一个ajax求，拿到分页信息
+         $(function(){
+             to_page(1);//首次加载页面时显示第一页
          });
-         // <th>账号</th>
-         // <th>昵称</th>
-         // <th>性别</th>
-         // <th>姓名</th>
-         // <th>E-mail</th>
-         // <th>地区</th>
-         // <th>操作</th>
-         function build_user_table(result) {
-             var users = result.extend.pageInfo.list;
-             $.each(users,function (index,item){
+         //跳转到页面
+         function to_page(pn){
+             $.ajax({
+                 url:"${APP_PATH}/user",
+                 data:"pn="+pn,
+                 type:"get",
+                 success:function (result) {
+                     //console.log(result);
+                     //1.解析并且显示员工数据
+                     build_users_table(result);
+                     //2.解析并且显示分页信息
+                     build_page_info(result);
+                     //3.分页条的显示
+                     build_page_nav(result);
+                 }
+             });
+         }
+         //table结构
+         function build_users_table(result) {
+             //清空table表
+             $("table tbody").empty();
+             var users=result.extend.pageInfo.list;
+             $.each(users,function (index,item) {
+                 //alert(item.empName);
+                 var uIdTd = $("<td></td>").append(item.uId);
                  var uUseridTd = $("<td></td>").append(item.uUserid);
                  var uNicknameTd = $("<td></td>").append(item.uNickname);
                  var uSexTd = $("<td></td>").append(item.uSex);
                  var uNameTd = $("<td></td>").append(item.uName);
                  var uEmailTd = $("<td></td>").append(item.uEmail);
                  var uWorkplaceTd = $("<td></td>").append(item.uWorkplace);
-                 var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm")
-                                                    .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+                 var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
+                     .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+                 //为删除按钮添加一个自定义的属性来表示当前删除的员工id
+                 delBtn.attr("delete-id",item.uId);
                  var btnTd = $("<td></td>").append(delBtn);
-                 $("<tr></tr>").append(uUseridTd)
+                 $("<tr></tr>")
+                     .append(uUseridTd)
                      .append(uNicknameTd)
                      .append(uSexTd)
                      .append(uNameTd)
@@ -113,14 +121,125 @@
                      .appendTo("#users_table tbody");
              });
          }
-         //解析显示分页
-         function build_page_info(){
-
+         //解析显示分页信息
+         function build_page_info(result){
+             $("#page_info_area").empty();
+             $("#page_info_area").append("当前"+result.extend.pageInfo.pageNum+"页，" +
+                 "总共"+result.extend.pageInfo.pages+"页，" +
+                 "总共"+result.extend.pageInfo.total+"条记录");
+             totalRecord=result.extend.pageInfo.total;
+             currentPage=result.extend.pageInfo.pageNum;
          }
-         //解析显示分页条
-         function build_page_nav(result) {
+         //解析显示分页条，点击分页要去下一页
+         function build_page_nav(result){
+             $("#page_nav_area").empty();
 
+             var ul=$("<ul><ul>").addClass("pagination");
+             var firstPageLi=$("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
+             var prePageLi=$("<li></li>").append($("<a></a>").append("&laquo;"));
+             if(result.extend.pageInfo.hasPreviousPage==false){
+                 firstPageLi.addClass("disabled");
+                 prePageLi.addClass("disabled");
+             }else{
+                 //为元素添加翻页事件
+                 firstPageLi.click(function () {
+                     to_page(1);
+                 });
+                 prePageLi.click(function () {
+                     to_page(result.extend.pageInfo.pageNum-1);
+                 });
+             }
+             var nextPageLi=$("<li></li>").append($("<a></a>").append("&raquo;"));
+             var lastPageLi=$("<li></li>").append($("<a></a>").append("末页").attr("href","#"));
+             if(result.extend.pageInfo.hasNextPage==false){
+                 lastPageLi.addClass("disabled");
+                 nextPageLi.addClass("disabled");
+             }else{
+                 //为元素添加翻页事件
+                 lastPageLi.click(function () {
+                     to_page(result.extend.pageInfo.pages);
+                 });
+                 nextPageLi.click(function () {
+                     to_page(result.extend.pageInfo.pageNum+1);
+                 });
+             }
+             //添加首页和前一页的提示
+             ul.append(firstPageLi).append(prePageLi);
+             //遍历给ul中添加页码
+             $.each(result.extend.pageInfo.navigatepageNums,function (index,item) {
+                 var numLi=$("<li></li>").append($("<a></a>").append(item));
+                 if(result.extend.pageInfo.pageNum==item){
+                     numLi.addClass("active");//高亮显示
+                 }
+                 numLi.click(function () {
+                     to_page(item);
+                 });
+                 ul.append(numLi);
+             });
+             //添加末页和下一页的提示
+             ul.append(nextPageLi).append(lastPageLi);
+
+             //把ul添加到nav中
+             var navEle=$("<nav></nav>").append(ul);
+             navEle.appendTo("#page_nav_area");
          }
+         $(document).on("click",".delete_btn",function () {
+             //弹出是否确认删除的对话框
+             // alert($(this).parents("tr").find("td:eq(0)").text());
+             var uUserid=$(this).parents("tr").find("td:eq(0)").text();
+             var uId=$(this).attr("delete-id");
+             if(confirm("确认删除【"+uUserid+"】吗？")){
+                 //确认，发送ajax请求删除
+                 $.ajax({
+                     url:"${APP_PATH}/users/"+uId,
+                     type:"DELETE",
+                     success:function (result) {
+                         alert(result.msg);
+                         to_page(currentPage);
+                     }
+                 })
+             }
+         });
+         <%--//完成全选，全不选功能--%>
+         <%--$("#check_all").click(function () {--%>
+         <%--    //attr获取checked是undefined,dom原生的属性--%>
+         <%--    //以后使用prop修改和读取dom原生属性的值--%>
+         <%--    //alert($(this).prop("checked"));--%>
+         <%--    $(".check_item").prop("checked",$(this).prop("checked"));--%>
+         <%--});--%>
+         <%--//check_item--%>
+         <%--$(document).on("click",".check_item",function () {--%>
+         <%--    //判断当前选择的元素是否是5个--%>
+         <%--    var flag=$(".check_item:checked").length==$(".check_item").length;--%>
+         <%--    $("#check_all").prop("checked",flag);--%>
+         <%--});--%>
+         <%--//点击全部删除就批量删除--%>
+         <%--$("#emp_delete_all").click(function () {--%>
+         <%--    var empNames="";--%>
+         <%--    var del_idstr="";--%>
+         <%--    $.each($(".check_item:checked"),function () {--%>
+         <%--        //当前遍历的元素--%>
+         <%--        //$(this).parents("tr").find("td:eq(2)").text();--%>
+         <%--        empNames+=$(this).parents("tr").find("td:eq(2)").text()+" ,";--%>
+         <%--        //组装员工id的字符串--%>
+         <%--        del_idstr+=$(this).parents("tr").find("td:eq(1)").text()+"-";--%>
+         <%--    });--%>
+         <%--    //去除empNames多余的逗号--%>
+         <%--    empNames=empNames.substring(0,empNames.length-1);--%>
+         <%--    del_idstr=del_idstr.substring(0,del_idstr.length-1);--%>
+         <%--    if(confirm("确认删除【"+empNames+"】吗？")){--%>
+         <%--        //发送ajax请求--%>
+         <%--        $.ajax({--%>
+         <%--            url:"${APP_PATH}/employee/emp/"+del_idstr,--%>
+         <%--            type:"DELETE",--%>
+         <%--            success:function (result) {--%>
+         <%--                alert(result.msg);--%>
+         <%--                //回到当期页面--%>
+         <%--                to_page(currentPage);--%>
+         <%--            }--%>
+         <%--        });--%>
+         <%--    }--%>
+         <%--})--%>
      </script>
 </body>
 </html>
