@@ -3,6 +3,7 @@ package com.ncu.bbs.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ncu.bbs.bean.Msg;
+import com.ncu.bbs.bean.main;
 import com.ncu.bbs.bean.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,11 +18,25 @@ public class userController {
     @Autowired
     com.ncu.bbs.services.userService userservice;
 
+    @RequestMapping("/user")
+    @ResponseBody
+    public Msg getUserWithJson(@RequestParam(value = "pn",defaultValue = "1")Integer pn){
+        //这是一个分页查询
+        //引入PageHelper分页插件
+        //在查询之前调用,传入页码，以及每一页的大小
+        PageHelper.startPage(pn,5);
+        //分页查询
+        List<user> user = userservice.getAll();
+        PageInfo<com.ncu.bbs.bean.user> page = new PageInfo<>(user,5);
+        return Msg.success().add("pageInfo",page);
+    }
+
     @RequestMapping(value="/users/{uId}",method = RequestMethod.DELETE)
     public Msg deleteEmById(@PathVariable("uId")Integer uId){
         userservice.deleteUser(uId);
         return Msg.success();
     }
+
     /**
      * 用户注册信息保存
      * @param
@@ -70,18 +85,4 @@ public class userController {
             return Msg.fail();
         }
     }
-
-    @RequestMapping("/user")
-    @ResponseBody
-    public Msg getUserWithJson(@RequestParam(value = "pn",defaultValue = "1")Integer pn){
-        //这是一个分页查询
-        //引入PageHelper分页插件
-        //在查询之前调用,传入页码，以及每一页的大小
-        PageHelper.startPage(pn,5);
-        //分页查询
-        List<user> user = userservice.getAll();
-        PageInfo<com.ncu.bbs.bean.user> page = new PageInfo<>(user,5);
-        return Msg.success().add("pageInfo",page);
-    }
-
 }
