@@ -63,7 +63,6 @@
              </div>
              <!--分页条-->
              <div class="col-md-6" id="page_nav_area">
-
              </div>
          </div>
      </div>
@@ -98,7 +97,7 @@
              var users=result.extend.pageInfo.list;
              $.each(users,function (index,item) {
                  //alert(item.empName);
-                 var uIdTd = $("<td></td>").append(item.uId);
+                 // var uIdTd = $("<td></td>").append(item.uId);
                  var uUseridTd = $("<td></td>").append(item.uUserid);
                  var uNicknameTd = $("<td></td>").append(item.uNickname);
                  var uSexTd = $("<td></td>").append(item.uSex);

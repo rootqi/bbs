@@ -29,7 +29,7 @@
 <div class="container">
     <!--标题-->
     <div class="row" class="col-md-12">
-        <h1>用户管理</h1>
+        <h1>板块管理</h1>
     </div>
     <!--按钮-->
     <div class="row">
@@ -37,15 +37,12 @@
     <!--显示表格数据-->
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-hover" id="mains_table">
+            <table class="table table-hover" id="sections_table">
                 <thead>
                 <tr>
-                    <th>主贴名称</th>
-                    <th>主贴内容</th>
-                    <th>置顶情况</th>
-                    <th>加精情况</th>
-                    <th>发帖日期</th>
-                    <th>积分</th>
+                    <th>板块名称</th>
+                    <th>板块描述</th>
+                    <th>版主id</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -76,13 +73,13 @@
     //跳转到页面
     function to_page(pn){
         $.ajax({
-            url:"${APP_PATH}/main",
+            url:"${APP_PATH}/section",
             data:"pn="+pn,
             type:"get",
             success:function (result) {
                 //console.log(result);
                 //1.解析并且显示员工数据
-                build_mains_table(result);
+                build_sections_table(result);
                 //2.解析并且显示分页信息
                 build_page_info(result);
                 //3.分页条的显示
@@ -91,42 +88,26 @@
         });
     }
     //table结构
-    function build_mains_table(result) {
+    function build_sections_table(result) {
         //清空table表
         $("table tbody").empty();
-        var mains=result.extend.pageInfo.list;
-        $.each(mains,function (index,item) {
-            //alert(item.empName);
-            //
-            //
-            //
-            // var 主贴名称 = $("<td></td>").append(item.主贴名称);
-            //
-            //
-            //
-            //
-            // var 主贴名称Td = $("<td></td>").append(item.主贴名称);
-            var mMainidTd = $("<td></td>").append(item.mMainid);
-            var mContentTd = $("<td></td>").append(item.mContent);
-            var mIsontopTd = $("<td></td>").append(item.mIsontop);
-            var mIsperfectTd = $("<td></td>").append(item.mIsperfect);
-            var mMaindateTd = $("<td></td>").append(item.mMaindate);
-            var mPointTd = $("<td></td>").append(item.mPoint);
+        var sections=result.extend.pageInfo.list;
+        $.each(sections,function (index,item) {
+            var sIdTd = $("<td></td>").append(item.sId);
+            var sSectionnameTd = $("<td></td>").append(item.sSectionname);
+            var sDescriptionTd = $("<td></td>").append(item.sDescription);
+            var sBanzhuidTd = $("<td></td>").append(item.sBanzhuid);
             var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
                 .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
             //为删除按钮添加一个自定义的属性来表示当前删除的员工id
-            delBtn.attr("delete-id",item.mMainid);
+            delBtn.attr("delete-id",item.sId);
             var btnTd = $("<td></td>").append(delBtn);
             $("<tr></tr>")
-                // .append(主贴名称)
-                .append(mMainidTd)
-                .append(mContentTd)
-                .append(mIsontopTd)
-                .append(mIsperfectTd)
-                .append(mMaindateTd)
-                .append(mPointTd)
+                .append(sSectionnameTd)
+                .append(sDescriptionTd )
+                .append(sBanzhuidTd )
                 .append(btnTd)
-                .appendTo("#mains_table tbody");
+                .appendTo("#sections_table tbody");
         });
     }
     //解析显示分页信息
@@ -193,13 +174,12 @@
     }
     $(document).on("click",".delete_btn",function () {
         //弹出是否确认删除的对话框
-        // alert($(this).parents("tr").find("td:eq(0)").text());
-        var mMaintitle=$(this).parents("tr").find("td:eq(0)").text();
-        var mMainid=$(this).attr("delete-id");
-        if(confirm("确认删除【"+mMaintitle+"】吗？")){
+        var sSectionname =$(this).parents("tr").find("td:eq(0)").text();
+        var sId=$(this).attr("delete-id");
+        if(confirm("确认删除"+sSectionname+"板块吗？")){
             //确认，发送ajax请求删除
             $.ajax({
-                url:"${APP_PATH}/mains/"+mMainid,
+                url:"${APP_PATH}/sections/"+sId,
                 type:"DELETE",
                 success:function (result) {
                     alert(result.msg);
