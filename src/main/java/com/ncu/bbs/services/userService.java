@@ -32,4 +32,6 @@ public interface userService {
     void saveUser(user user);
 
     boolean checkuUserid(String uUserid);
+
+    List<user> getAll();
 }

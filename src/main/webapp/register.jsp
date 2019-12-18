@@ -118,7 +118,7 @@
                     <div class="form-group">
                         <label class="col-lg-3 control-label">地区</label>
                         <div class="col-lg-5">
-                            <select class="form-control" name="uWorkplace" data-bv-notempty data-bv-notempty-message="The country is required">
+                            <select class="form-control" name="uWorkplace" id="uWorkplace" data-bv-notempty data-bv-notempty-message="The country is required">
                                 <option value="">-- Select a country --</option>
                                 <option value="中国">China</option>
                                 <option value="法国">France</option>

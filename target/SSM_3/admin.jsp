@@ -19,7 +19,7 @@
         <div class="layui-logo">管理员系统</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="register.jsp">用户注册页面</a></li>
+            <li class="layui-nav-item"><a href="" onclick="reg()">用户注册页面</a></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
@@ -38,7 +38,7 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a class="" href="">操作中心</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="">查看主贴</a></dd>
+                        <dd><a href="javascript:changePage();">查看主贴</a></dd>
                         <dd><a href="">用户管理</a></dd>
                         <dd><a href="">板块管理</a></dd>
                     </dl>
@@ -46,9 +46,8 @@
             </ul>
         </div>
     </div>
-    <div class="layui-body">
+    <div class="layui-body" id="body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域</div>
     </div>
     <div class="layui-footer">
     </div>
@@ -59,6 +58,10 @@
     layui.use('element', function(){
         var element = layui.element;
     });
+
+    function reg(){
+        document.getElementById("body").innerHTML='<iframe src="register.jsp"></iframe>'
+    }
 </script>
 </body>
 </html>

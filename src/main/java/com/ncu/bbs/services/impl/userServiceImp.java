@@ -7,6 +7,7 @@ import com.ncu.bbs.services.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class userServiceImp implements userService {
 
     /**
      * 用户保存方法
-     * @param user
+     * @param
      */
     @Override
     public void saveUser(user user) {
@@ -83,7 +84,7 @@ public class userServiceImp implements userService {
 
     /**
      * 检验用户账号是否可用
-     * @param uName
+     * @param
      * @return  true代表当前账号可用 false代表不可用
      */
     public boolean checkuUserid(String uUserid){
@@ -92,5 +93,14 @@ public class userServiceImp implements userService {
         criteria.andUUseridEqualTo(uUserid);
         long count = usermapper.countByExample(example);
         return count==0;
+    }
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Override
+    public List<user> getAll() {
+        return usermapper.selectByExample(null);
     }
 }
