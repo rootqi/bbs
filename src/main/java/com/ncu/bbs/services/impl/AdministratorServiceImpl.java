@@ -23,4 +23,28 @@ public class AdministratorServiceImpl implements AdministratorService {
         List<administrator> list=administratorMapper.selectByExample(null);
         return list;
     }
+
+    /**
+     * 检验用户账号是否可用
+     * @param
+     * @return  true代表当前账号可用 false代表不可用
+     */
+    public boolean checkaAdminname(String aAdminname){
+        administratorExample example = new administratorExample();
+        administratorExample.Criteria criteria = example.createCriteria();
+        criteria.andAAdminnameEqualTo(aAdminname);
+        long count = administratorMapper.countByExample(example);
+        return count==0;
+    }
+
+    @Override
+    public boolean checkaPassword(String aPassword) {
+        administratorExample example = new administratorExample();
+        administratorExample.Criteria criteria = example.createCriteria();
+        criteria.andAPasswordEqualTo(aPassword);
+        long count = administratorMapper.countByExample(example);
+        return count==0;
+    }
+
+
 }

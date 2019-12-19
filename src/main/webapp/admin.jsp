@@ -39,7 +39,7 @@
                     <a class="" href="">操作中心</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;">查看主贴</a></dd>
-                        <dd><a href="">用户管理</a></dd>
+                        <dd><a target="userList">用户管理</a></dd>
                         <dd><a href="">板块管理</a></dd>
                     </dl>
                 </li>
@@ -48,6 +48,10 @@
     </div>
     <div class="layui-body" id="body">
         <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <iframe class="layadmin-iframe ifrem_voice" src="viewsuserlist.jsp" width="100%" height="700px"frameborder="0" name="userList" scrolling="no"></iframe>
+            <iframe class="layadmin-iframe ifrem_voice" src="viewsectionlist.jsp" width="100%" height="700px"frameborder="0" name="sectionList" scrolling="no"></iframe>
+        </div>
     </div>
     <div class="layui-footer">
     </div>

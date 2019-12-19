@@ -31,4 +31,5 @@ public interface administratorMapper {
     int updateByPrimaryKeySelective(administrator record);
 
     int updateByPrimaryKey(administrator record);
+
 }

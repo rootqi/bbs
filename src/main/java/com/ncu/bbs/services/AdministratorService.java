@@ -10,4 +10,7 @@ import java.util.List;
 public interface AdministratorService {
     public void insertAdministrator(administrator administrator);
     public List<administrator> selectAllAdministrator();
+    boolean checkaAdminname(String aAdminname);
+
+    boolean checkaPassword(String aPassword);
 }

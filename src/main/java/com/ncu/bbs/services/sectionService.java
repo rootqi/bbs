@@ -1,7 +1,5 @@
 package com.ncu.bbs.services;
 
-import com.ncu.bbs.bean.main;
-import com.ncu.bbs.bean.mainExample;
 import com.ncu.bbs.bean.section;
 import com.ncu.bbs.bean.sectionExample;
 import org.apache.ibatis.annotations.Param;
@@ -35,4 +33,8 @@ public interface sectionService {
     List<section> getAll();
 
     void deleteSection(Integer sId);
+
+    section getSection(Integer sId);
+
+    void updatesection(section section);
 }

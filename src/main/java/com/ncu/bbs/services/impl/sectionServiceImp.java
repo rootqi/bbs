@@ -1,10 +1,7 @@
 package com.ncu.bbs.services.impl;
 
-import com.ncu.bbs.bean.main;
-import com.ncu.bbs.bean.mainExample;
 import com.ncu.bbs.bean.section;
 import com.ncu.bbs.bean.sectionExample;
-import com.ncu.bbs.dao.mainMapper;
 import com.ncu.bbs.dao.sectionMapper;
 import com.ncu.bbs.services.sectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +80,17 @@ public class sectionServiceImp implements sectionService {
     @Override
     public void deleteSection(Integer sId) {
         sectionmapper.deleteByPrimaryKey(sId);
+    }
+
+    @Override
+    public section getSection(Integer sId) {
+
+        section section = sectionmapper.selectByPrimaryKey(sId);
+        return section;
+    }
+
+    @Override
+    public void updatesection(section section) {
+        sectionmapper.updateByPrimaryKeySelective(section);
     }
 }

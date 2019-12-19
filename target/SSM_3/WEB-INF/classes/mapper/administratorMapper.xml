@@ -208,4 +208,5 @@
       a_email = #{aEmail,jdbcType=VARCHAR}
     where a_id = #{aId,jdbcType=INTEGER}
   </update>
+
 </mapper>

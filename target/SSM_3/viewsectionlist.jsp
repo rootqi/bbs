@@ -25,6 +25,48 @@
     <link href="${APP_PATH}/statics/css/bootstrap-3.3.7-dist/css/bootstrapValidator.css" rel="stylesheet">
 </head>
 <body>
+<!-- 编辑板块模态框 -->
+<div class="modal fade" id="sectionUpdateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">修改板块</h4>
+            </div>
+            <div class="modal-body">
+                <!--编辑表单-->
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="sBanzhuid_update_input" class="col-sm-2 control-label">版主id</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="sBanzhuid" id="sBanzhuid_update_input" placeholder="请输入你要修改后的版主id">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sSectionname_update_static" class="col-sm-2 control-label">版块名称</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="sSectionname_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sDescription_update_static" class="col-sm-2 control-label">板块描述</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="sDescription_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default" id="section_update_btn">修改</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--搭建显示页面-->
 <div class="container">
     <!--标题-->
@@ -97,11 +139,15 @@
             var sSectionnameTd = $("<td></td>").append(item.sSectionname);
             var sDescriptionTd = $("<td></td>").append(item.sDescription);
             var sBanzhuidTd = $("<td></td>").append(item.sBanzhuid);
+            var editBtn=$("<button></button>").addClass("btn btn-primary btn-sm edit_btn")
+                .append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("编辑");
+            //为编辑按钮添加一个自定义的属性
+            editBtn.attr("edit-id",item.sId);
             var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
                 .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
             //为删除按钮添加一个自定义的属性来表示当前删除的员工id
             delBtn.attr("delete-id",item.sId);
-            var btnTd = $("<td></td>").append(delBtn);
+            var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
             $("<tr></tr>")
                 .append(sSectionnameTd)
                 .append(sDescriptionTd )
@@ -172,6 +218,8 @@
         var navEle=$("<nav></nav>").append(ul);
         navEle.appendTo("#page_nav_area");
     }
+
+    //删除操作
     $(document).on("click",".delete_btn",function () {
         //弹出是否确认删除的对话框
         var sSectionname =$(this).parents("tr").find("td:eq(0)").text();
@@ -188,46 +236,75 @@
             })
         }
     });
-    <%--//完成全选，全不选功能--%>
-    <%--$("#check_all").click(function () {--%>
-    <%--    //attr获取checked是undefined,dom原生的属性--%>
-    <%--    //以后使用prop修改和读取dom原生属性的值--%>
-    <%--    //alert($(this).prop("checked"));--%>
-    <%--    $(".check_item").prop("checked",$(this).prop("checked"));--%>
-    <%--});--%>
-    <%--//check_item--%>
-    <%--$(document).on("click",".check_item",function () {--%>
-    <%--    //判断当前选择的元素是否是5个--%>
-    <%--    var flag=$(".check_item:checked").length==$(".check_item").length;--%>
-    <%--    $("#check_all").prop("checked",flag);--%>
-    <%--});--%>
-    <%--//点击全部删除就批量删除--%>
-    <%--$("#emp_delete_all").click(function () {--%>
-    <%--    var empNames="";--%>
-    <%--    var del_idstr="";--%>
-    <%--    $.each($(".check_item:checked"),function () {--%>
-    <%--        //当前遍历的元素--%>
-    <%--        //$(this).parents("tr").find("td:eq(2)").text();--%>
-    <%--        empNames+=$(this).parents("tr").find("td:eq(2)").text()+" ,";--%>
-    <%--        //组装员工id的字符串--%>
-    <%--        del_idstr+=$(this).parents("tr").find("td:eq(1)").text()+"-";--%>
+    //点击编辑钮创建之前就绑定了事件，编辑信息资料
+    //2.可以在创建按钮的时候绑定事件 3.绑定点击.live()
+    //jquery新版本没有live(),使用on替代
+    $(document).on("click",".edit_btn",function () {
+        //alert("");
+        //-------------注意以下的逻辑关系，先后次序不能改变
+
+        getSection($(this).attr("edit-id"));
+
+        $("#sectionUpdateModal").modal({
+            backdrop:"static"
+        });
+
+        //2.把版主的id传递给模态框的更新按钮
+        $("#section_update_btn").attr("edit-id",$(this).attr("edit-id"));
+
+
+    });
+
+
+    //获取员工信息
+    function getSection(sId) {
+        $.ajax({
+            url:"${APP_PATH}/section/"+sId,
+            type:"GET",
+            success:function (result) {
+                var sectionData=result.extend.section;
+                $("#sSectionname_update_static").text(sectionData.sSectionname);
+                $("#sDescription_update_static").text(sectionData.sDescription);
+                $("#sBanzhuid_update_input").val(sectionData.sBanzhuid);
+            }
+        });
+    }
+    <%--//点击更新，更新板块信息--%>
+    <%--$("#section_update_btn").click(function () {--%>
+    <%--    var sBanzhuid=$("#sBanzhuid_update_input").val();--%>
+    <%--    alert(sBanzhuid);--%>
+    <%--    //发送ajax请求，保存更新的用户信息--%>
+    <%--    $.ajax({--%>
+    <%--        url:"${APP_PATH}/section/"+$(this).attr("edit-id"),--%>
+    <%--        method:"PUT",--%>
+    <%--        data:"sBanzhuid="+sBanzhuid,--%>
+    <%--        success:function (result) {--%>
+    <%--            alert(result.msg);--%>
+    <%--            //1.关闭对话框--%>
+    <%--            $("#sectionUpdateModal").modal("hide");--%>
+    <%--            //2.回到本页面--%>
+    <%--            to_page(currentPage);--%>
+    <%--        }--%>
     <%--    });--%>
-    <%--    //去除empNames多余的逗号--%>
-    <%--    empNames=empNames.substring(0,empNames.length-1);--%>
-    <%--    del_idstr=del_idstr.substring(0,del_idstr.length-1);--%>
-    <%--    if(confirm("确认删除【"+empNames+"】吗？")){--%>
-    <%--        //发送ajax请求--%>
-    <%--        $.ajax({--%>
-    <%--            url:"${APP_PATH}/employee/emp/"+del_idstr,--%>
-    <%--            type:"DELETE",--%>
-    <%--            success:function (result) {--%>
-    <%--                alert(result.msg);--%>
-    <%--                //回到当期页面--%>
-    <%--                to_page(currentPage);--%>
-    <%--            }--%>
-    <%--        });--%>
-    <%--    }--%>
-    <%--})--%>
+    <%--});--%>
+    //点击更新，更新板块信息
+    $("#section_update_btn").click(function () {
+        var sBanzhuid=$("#sBanzhuid_update_input").val();
+        alert(sBanzhuid);
+        alert($(this).attr("edit-id"));
+        //发送ajax请求，保存更新的用户信息
+        $.ajax({
+            url:"${APP_PATH}/saveBanzhuid？sBanzhuid="+sBanzhuid+"&sId="+$(this).attr("edit-id"),
+            method:"POST",
+            success:function (result) {
+                alert(result.msg);
+                //1.关闭对话框
+                $("#sectionUpdateModal").modal("hide");
+                //2.回到本页面
+                to_page(currentPage);
+            }
+        });
+    });
 </script>
 </body>
 </html>
