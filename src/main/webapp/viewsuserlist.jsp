@@ -187,58 +187,27 @@
              // alert($(this).parents("tr").find("td:eq(0)").text());
              var uUserid=$(this).parents("tr").find("td:eq(0)").text();
              var uId=$(this).attr("delete-id");
-             if(confirm("确认删除【"+uUserid+"】吗？")){
+             var data={
+                 "uId":uId,
+             };
+             if(confirm("确认删除"+uUserid+"吗？")){
                  //确认，发送ajax请求删除
                  $.ajax({
-                     url:"${APP_PATH}/users/"+uId,
-                     type:"DELETE",
+                     url:"${APP_PATH}/users",
+                     type:"POST",
+                     data:data,
                      success:function (result) {
-                         alert(result.msg);
-                         to_page(currentPage);
+                         if(result.code==100) {
+                             alert("删除成功");
+                             to_page(currentPage);
+                         }else{
+                             alert("删除失败");
+                             to_page(currentPage);
+                         }
                      }
-                 })
+                 });
              }
          });
-         <%--//完成全选，全不选功能--%>
-         <%--$("#check_all").click(function () {--%>
-         <%--    //attr获取checked是undefined,dom原生的属性--%>
-         <%--    //以后使用prop修改和读取dom原生属性的值--%>
-         <%--    //alert($(this).prop("checked"));--%>
-         <%--    $(".check_item").prop("checked",$(this).prop("checked"));--%>
-         <%--});--%>
-         <%--//check_item--%>
-         <%--$(document).on("click",".check_item",function () {--%>
-         <%--    //判断当前选择的元素是否是5个--%>
-         <%--    var flag=$(".check_item:checked").length==$(".check_item").length;--%>
-         <%--    $("#check_all").prop("checked",flag);--%>
-         <%--});--%>
-         <%--//点击全部删除就批量删除--%>
-         <%--$("#emp_delete_all").click(function () {--%>
-         <%--    var empNames="";--%>
-         <%--    var del_idstr="";--%>
-         <%--    $.each($(".check_item:checked"),function () {--%>
-         <%--        //当前遍历的元素--%>
-         <%--        //$(this).parents("tr").find("td:eq(2)").text();--%>
-         <%--        empNames+=$(this).parents("tr").find("td:eq(2)").text()+" ,";--%>
-         <%--        //组装员工id的字符串--%>
-         <%--        del_idstr+=$(this).parents("tr").find("td:eq(1)").text()+"-";--%>
-         <%--    });--%>
-         <%--    //去除empNames多余的逗号--%>
-         <%--    empNames=empNames.substring(0,empNames.length-1);--%>
-         <%--    del_idstr=del_idstr.substring(0,del_idstr.length-1);--%>
-         <%--    if(confirm("确认删除【"+empNames+"】吗？")){--%>
-         <%--        //发送ajax请求--%>
-         <%--        $.ajax({--%>
-         <%--            url:"${APP_PATH}/employee/emp/"+del_idstr,--%>
-         <%--            type:"DELETE",--%>
-         <%--            success:function (result) {--%>
-         <%--                alert(result.msg);--%>
-         <%--                //回到当期页面--%>
-         <%--                to_page(currentPage);--%>
-         <%--            }--%>
-         <%--        });--%>
-         <%--    }--%>
-         <%--})--%>
      </script>
 </body>
 </html>
